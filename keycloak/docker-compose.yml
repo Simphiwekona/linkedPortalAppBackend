@@ -1,0 +1,37 @@
+version: '3.8'
+
+services:
+  keycloak:
+    image: konasimphiwe/keycloak:v01
+    container_name: keycloak
+    ports:
+      - "8080:8080" # Keycloak Admin Console is accessible on this port
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      DB_VENDOR: postgres
+      DB_ADDR: db
+      DB_PORT: 5432
+      DB_DATABASE: keycloak
+      DB_USER: postgres
+      DB_PASSWORD: postgres
+    depends_on:
+      - db
+    command: ["start-dev"]
+    # volumes:
+    #   - ./custom-config.json:/opt/jboss/keycloak/standalone/configuration/custom-config.json
+
+  db:
+    image: postgres:latest
+    container_name: postgres_portal
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
